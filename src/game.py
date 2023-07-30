@@ -3,7 +3,6 @@ import math
 from time import sleep, time
 import constants
 import keyboard
-import pyautogui
 import numpy as np
 
 
@@ -14,6 +13,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 DPS_MONSTER_COORDINATES = [(468, 611)]
 #DPS_MONSTER_COORDINATES = [(293, 705)]  # cemetery
+#DPS_MONSTER_COORDINATES = [(520, 650)]  # haunted
+
 
 
 class Game:
@@ -47,7 +48,8 @@ class Game:
                 self.do_prestige_if_slow_progress: 10,
                 self.do_boss_rush_if_available: 10,
                 self.press_play_if_paused: 30,  # failsafe in case something made the game pause
-                self.random_break: 60
+                self.random_break: 60,
+                self.handle_mission_rewards: 60
             }
 
             for task, interval in tasks.items():
@@ -87,14 +89,13 @@ class Game:
                 self.window.click(*constants.MONSTER['evolve_button_coords'])
             else:
                 self.window.click(*constants.MONSTER['open_pets_tab_button_coords'])
-                self.window.move_mouse(660, 650)
-                pyautogui.scroll(150)
+                self.window.scroll_up(150, 660, 650)
                 for i in range(70):
                     if self.window.pixel_is_color(660, 650, constants.COLORS['green_button_darker']):
                         logging.info(f'Found pet upgrade after scrolling {i} times')
                         self.window.click(556, 670)  # Upgrade pet
                         break
-                    pyautogui.scroll(-1)
+                    self.window.scroll_down(1, 660, 650)
             keyboard.press_and_release('esc')  # Close Tower Info
 
     def close_menu_if_open(self):
@@ -127,8 +128,7 @@ class Game:
         if self.current_map == 'enchanted_forest':  # todo: add support for other maps
             self.handle_monsters(dps_only=False)  # Dump gold before prestige, for mosnter level achievementx
         self.window.click(*constants.PRESTIGE['open_menu_button_coords'])
-        self.window.move_mouse(*constants.PRESTIGE['prestige_button_coords'])
-        pyautogui.scroll(-50)  # Scroll down
+        self.window.scroll_down(50, *constants.PRESTIGE['prestige_button_coords'])
         self.window.click(*constants.PRESTIGE['prestige_button_coords'])
         sleep(7)  # Wait for prestige to finish
 
@@ -137,8 +137,7 @@ class Game:
             self.window.click(560, 940)  # Click "Maybe later" button
 
         self.window.click(30, 1050)  # Click loadout button
-        self.window.move_mouse(350, 850)
-        pyautogui.scroll(50)  # Scroll up
+        self.window.scroll_up(50, 350, 850)
         self.window.click(350, 757)  # Load loadout 1
         self.do_boss_rush_if_available()
         self.press_play_if_paused()
@@ -177,3 +176,26 @@ class Game:
             sleep_time = np.random.randint(60, 60*15)
             logging.info(f'Random break for {(sleep_time/60):.1f} minutes')
             sleep(sleep_time)
+
+    def handle_mission_rewards(self):
+        if self.window.pixel_is_color(471, 1109, constants.COLORS['exclamation_mark']):
+            logging.info("Mission reward available, entering missions menu")
+            self.window.click(431, 1123)
+            if self.window.pixel_is_color(306, 1047, constants.COLORS['exclamation_mark']):
+                logging.info("Daily Missions rewards available, claiming")
+                self.window.click(258, 1063)
+                claim_locations = self.window.get_clusters_of_color(constants.COLORS['green_button'], constants.MENU_RIGHT_SIDE_REGION)
+                for (x, y) in claim_locations:
+                    logging.info("Claiming reward at " + str((x, y)))
+                    self.window.click(x, y)
+            if self.window.pixel_is_color(185, 1047, constants.COLORS['exclamation_mark']):
+                logging.info("Achievement rewards available, claiming")
+                self.window.click(137, 1063)
+                self.window.scroll_up(40, 260, 600)
+                for _ in range(3):
+                    claim_locations = self.window.get_clusters_of_color(constants.COLORS['green_button'], constants.MENU_RIGHT_SIDE_REGION)
+                    for (x, y) in claim_locations:
+                        logging.info("Claiming reward at " + str((x, y)))
+                        self.window.click(x, y)
+                    self.window.scroll_down(25, 260, 600)
+            keyboard.press_and_release('esc')

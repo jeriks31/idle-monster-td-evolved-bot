@@ -1,4 +1,6 @@
 WAVE_REGION = (49, 44, 111, 30)
+MENU_INNER_REGION = (76, 208, 607, 822)
+MENU_RIGHT_SIDE_REGION = (500, 208, 183, 822)
 COLORS = {
     'exclamation_mark': (206, 149, 12),
     'green_button': (143, 204, 84),  # majority green color of play button
