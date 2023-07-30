@@ -20,16 +20,14 @@ class GameWindow:
         self.offset_y = win_rect[1]
         self.reader = easyocr.Reader(['en'])
 
-    def click(self, x, y):
-        abs_x = self.offset_x + x
-        abs_y = self.offset_y + y
-        pyautogui.moveTo(abs_x, abs_y)
+    def click(self, x, y, randomize_radius=3):
+        self.move_mouse(x, y, randomize_radius)
         pyautogui.click()
-        sleep(0.07)
+        sleep(0.1)
 
-    def move_mouse(self, x, y):
-        abs_x = self.offset_x + x
-        abs_y = self.offset_y + y
+    def move_mouse(self, x, y, randomize_radius=3):
+        abs_x = self.offset_x + x + np.random.randint(-randomize_radius, randomize_radius)
+        abs_y = self.offset_y + y + np.random.randint(-randomize_radius, randomize_radius)
         pyautogui.moveTo(abs_x, abs_y)
 
     def pixel_is_color(self, x, y, color):
@@ -50,7 +48,6 @@ class GameWindow:
 
     def get_text_from_screen(self, region):
         screenshot_image = self.grab_screen(region)
-        screenshot_image.save("screenshot.png")
         screenshot = cv2.cvtColor(np.array(screenshot_image), cv2.COLOR_RGB2BGR)
         result = self.reader.readtext(screenshot)
         return ' '.join([res[1] for res in result])
