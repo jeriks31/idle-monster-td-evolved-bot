@@ -3,6 +3,7 @@ from time import sleep
 import scipy
 
 import numpy as np
+import win32con
 import win32gui
 import pyautogui
 from PIL import Image
@@ -16,6 +17,8 @@ class GameWindow:
         self.hwnd = win32gui.FindWindow(None, title)
         if not self.hwnd:
             raise ValueError(f"Window '{title}' not found!")
+        # TODO: Find out why 14 and 7 are needed here to get the correct size ...
+        win32gui.SetWindowPos(self.hwnd, win32con.HWND_TOPMOST, 0, 0, 762+14, 1157+7, win32con.SWP_NOMOVE)
         win_rect = win32gui.GetWindowRect(self.hwnd)
         self.offset_x = win_rect[0] + 7
         self.offset_y = win_rect[1]

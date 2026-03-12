@@ -13,7 +13,23 @@ MONSTER_COORDS = {
          (292, 424), (468, 424),
          (292, 547), (468, 547),
          (468, 611),
-         (292, 734), (468, 734)]
+         (292, 734), (468, 734)],
+    'haunted_dungeon':
+        [(431, 286),
+         (431, 372),
+         (431, 461), (518, 461),
+         (343, 553), (431, 553),
+         (431, 639), (518, 646),
+         (431, 734),
+         (431, 820)],
+    'eerie_cemetery':
+        [(382, 336),
+         (382, 429),
+         (382, 522),
+         (206, 583), (557, 583),
+         (382, 615),
+         (293, 708), (470, 708),
+         (293, 833), (470, 833)]
 }
 MOB = {
     'ready_text_region': (5, 270, 52, 16),
@@ -24,7 +40,7 @@ MOB = {
 TANK = {
     'ready_text_region': (5, 345, 52, 16),
     'open_menu_button_coords': (31, 310),
-    'start_button_coords': (377, 1053),
+    'start_button_coords': (400, 1045),
     'close_menu_button_coords': (629, 174)
 }
 BOSS_RUSH = {
@@ -41,5 +57,7 @@ MONSTER = {
     'open_tower_info_button_coords': (97, 955),
     'open_evolution_tab_button_coords': (303, 1063),
     'open_pets_tab_button_coords': (456, 1063),
-    'evolve_button_coords': (380, 960)
+    'evolve_button_coords': (380, 960),
+    'evolve_name_region': (496, 282, 685-496, 312-282),
+    'upgrade_pet_name_region': (164, 345, 280, 32),
 }
